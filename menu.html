@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<!--
+/**
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain
+ * a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * @author      Ryan McCullagh <ryan@ryanmccullagh.com>
+ * @copyright   2014 Ryan McCullagh
+ * @link        http://github.com/rmccullagh/js-components
+ * @license     http://www.apache.org/licenses/LICENSE-2.0 
+ */
+ -->
+
+<html>
+<head>
+<script>
+Function.prototype.bind = function(context) {
+	var self = this;
+	return function() {
+		return self.apply(context, Array.prototype.slice.call(arguments));;
+	}
+}
+
+
+function spacify(s) {
+	str = '';
+	for(i = 0; i < s.length; i++) {
+		if(s[i] == ' ') continue;
+		str += s[i] + ' ';
+	}
+	return str;
+}
+
+String.prototype.spacify = function() {
+	return spacify.call(spacify, this);
+}
+
+
+log('ryan mccullagh'.spacify());
+
+
+console.log(spacify('hello world'));
+
+function log() {
+
+	args = Array.prototype.slice.call(arguments);
+	args.unshift('(app)');
+	console.log.apply(console, args);
+}
+
+var User = {
+	count: 1,
+	getCount: function() {
+		//console.log(this);
+		return this.count;
+	}
+}
+log(User.getCount());
+
+var func = User.getCount.bind(User);
+
+log(func());
+
+</script>
+<style>
+#menu-toggle {
+	width:100px;
+	height:20px;
+	color:white;
+	padding:7px;
+	background:red;
+	text-align:center;
+	cursor:pointer;
+	font-weight:bold;
+}
+#menu-container {
+	width:300px;
+	border:1px solid blue;
+	background:#F9F9F9;
+	height:150px;
+}
+.hidden {
+	display:none;
+}
+#hover-toggle {
+	width:100px;
+	height:20px;
+	color:white;
+	padding:7px;
+	background:green;
+	text-align:center;
+	cursor:pointer;
+	font-weight:bold;
+}
+#menu-hover-container {
+	width:300px;
+	border:1px solid blue;
+	background:#F9F9F9;
+	height:150px;
+}
+</style>
+</head>
+<body>
+	<div id="menu-toggle">
+		Click Menu
+	</div>
+	
+	<div class="test-class testing hidden" id="menu-container">
+	
+	</div>
+	
+	<br />
+	
+	<div id="hover-toggle">
+		Hover Menu
+	</div>
+	
+	<div class="hidden" id="menu-hover-container">
+	
+	</div>
+	
+	<div class="ab">a</div>
+	<div class="ab">a</div>
+	<div class="ab">a</div>
+	<div class="ab">a</div>
+	
+	<script>
+	
+	[].forEach.call(document.querySelectorAll('.ab'), function(el) { 
+		el.classList.add('D');
+		el.classList.add('hidden');
+		el.setAttribute('data-dyn','true');
+		el.addEventListener('click', function(e) {
+			console.log('.ab clicked');
+		});
+	});
+
+	
+	
+	document.addEventListener('DOMContentLoaded', function(){
+		console.log('dom loaded');
+	});
+	
+	
+	
+	console.log(document.querySelectorAll('.ab'));
+	
+	
+	function $(name) {
+		return document.getElementById(name);
+	}
+	
+	$('hover-toggle').addEventListener('mousemove', function(e) {
+		$('menu-hover-container').removeClass('hidden');
+	});
+	
+	$('menu-hover-container').addEventListener('mouseenter', function(e) {
+		this.IS_IN_MENU = true;
+	});
+	$('menu-hover-container').addEventListener('mouseleave', function(e) {
+		this.IS_IN_MENU = false;
+	});
+
+	window.addEventListener('mousemove', function(e) {
+		var el = e.target;
+		if(el.id == 'hover-toggle' || el.id == 'menu-hover-container' || $('menu-hover-container').hasClass('hidden'))
+			return;
+		else {
+			(function() {
+				var self = this;
+				setTimeout(function() {
+					if( self.IS_IN_MENU === true )
+						return;					
+					self.addClass('hidden');				
+				}, 200);
+			}).call($('menu-hover-container'));
+		}
+	}, false);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var mt = document.getElementById("menu-toggle");
+	var mc = document.getElementById("menu-container");
+	
+	function Field(val){
+		var value = val;
+
+		this.__defineGetter__("value", function(){
+			console.log(this);
+			return value;
+		});
+
+		this.__defineSetter__("value", function(val){
+			if(val != 'ryan') {
+				throw Error("Must equal RYAN!!!");
+			} else {
+				value = val;
+			}
+		});
+		
+	}
+	
+	
+	
+	var field = new Field("test");
+//console.log(field.value);
+	// => test
+	field.value = "ryan";
+	//console.log(field.value);
+	// => "test2"
+
+	
+	
+	Object.prototype.hasClass = function(name) {
+		var c = this.className.split(" ");
+		for(i = 0; i < c.length; i++) {
+			if(c[i] === name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	Object.prototype.removeClass = function(name) {
+		var cc = this.className.split(" ");
+		//console.log(cc);
+		var nc = [];
+		for(var i = 0; i < cc.length; i++) {
+			if(cc[i] == name)
+				continue;
+			nc.push(cc[i]);
+		}
+		
+		this.className = nc.join(" ");
+	}
+	
+	Object.prototype.addClass = function(name) {
+		if(this.hasClass(name))
+			return;
+			
+		var cn = this.className.split(" ");
+		var nc = [];
+		for(var i = 0; i < cn.length; i++) {
+			nc.push(cn[i]);
+		}			
+		nc.push(name);
+		this.className = nc.join(" ");		
+	}
+	
+	Object.prototype.toggleClass = function(name) {
+		if(this.hasClass(name)) {
+			this.removeClass(name);
+		} else {
+			this.addClass(name);
+		}
+	}
+	
+	
+	
+	mt.addEventListener("click", function(e) {
+		mc.toggleClass('hidden');
+	});
+	
+	
+	
+	document.documentElement.addEventListener("click", function(e) {
+		var el = event.target;
+		
+		if(el.id == 'menu-toggle' || el.id == 'menu-container' || mc.hasClass('hidden') ) {
+			return;
+		} else {
+			mc.addClass('hidden');
+		}
+	});
+	document.addEventListener("keyup", function(e) {
+		//console.log(e.keyCode, typeof e.keyCode);
+		if(e.keyCode === 27) {
+			mc.className = 'hidden';
+		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</script>
+</body>
+</html>
